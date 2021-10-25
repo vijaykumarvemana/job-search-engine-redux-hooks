@@ -4,6 +4,7 @@ import favoriteReducer from "../reducers/favorite"
 import thunk from "redux-thunk"
 import { persistStore, persistReducer } from "redux-persist"
 import storageSession from 'redux-persist/lib/storage/session'
+import { encryptTransform } from "redux-persist-transform-encrypt"
 
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
@@ -24,6 +25,14 @@ export const initialState = {
 const persistConfig = {
     key: 'root',
     storage: storageSession,
+    transforms: [
+        encryptTransform({
+            secretKey:process.env.REACT_APP_SECRET_KEY,
+            onError: (error) => {
+                console.log(error)
+            }
+        })
+    ]
 }
 
 const mainReducer = combineReducers({
