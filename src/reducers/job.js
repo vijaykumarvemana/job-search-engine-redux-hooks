@@ -1,4 +1,4 @@
-import { GET_JOBS, GET_JOBS_ERROR, GET_JOBS_LOADING } from '../actions'
+import { GET_JOBS} from '../actions'
 import { initialState } from '../store'
 
 

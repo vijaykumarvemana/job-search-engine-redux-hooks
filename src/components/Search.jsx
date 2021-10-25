@@ -1,49 +1,50 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Container, Row, Col, Form,Button } from 'react-bootstrap'
 import Job from './Job'
 import uniqid from 'uniqid'
-import { connect } from 'react-redux'
 import { getJobsAction } from '../actions'
+import { useDispatch } from 'react-redux'
 
 
-const mapStateToProps = (state) => ({
-    // jobs: state.job.jobs,
-    // isError: state.job.isError,
-    // isLoading: state.job.isLoading
-  })
+// const mapStateToProps = (state) => ({
+//     // jobs: state.job.jobs,
+//     // isError: state.job.isError,
+//     // isLoading: state.job.isLoading
+//   })
   
-  const mapDispatchToProps = (dispatch) => ({
-    getJobs: () => {
+//   const mapDispatchToProps = (dispatch) => ({
+//     getJobs: () => {
         
-      dispatch(getJobsAction())
-    }
-  })
+//       dispatch(getJobsAction())
+//     }
+//   })
 
- class MainSearch extends React.Component {
+ const MainSearch = ({history}) => {
 
-    state = {
-        query: '',
-        jobs: []
-    }
+   
+    const [query, setQuery] = useState('')
+    const [jobs,setJobs] = useState([])
+    const dispatch = useDispatch()
     
    
-    baseEndpoint = 'https://strive-jobs-api.herokuapp.com/jobs?search='
+ const baseEndpoint = 'https://strive-jobs-api.herokuapp.com/jobs?search='
 
-  componentDidCatch = async () => {
 
-      this.props.getJobs()
-  }
+ useEffect (()=>{
+    dispatch(getJobsAction())
+ },[dispatch])
+  
   
     
-    handleChange = (e) => {
-        this.setState({ query: e.target.value })
+   const handleChange = (e) => {
+        setQuery(e.target.value)
     }
 
-    handleSubmit = async (e) => {
+   const handleSubmit = async (e) => {
         e.preventDefault()
         
 
-        const response = await fetch(this.baseEndpoint + this.state.query + '&limit=20')
+        const response = await fetch(baseEndpoint + query + '&limit=20')
 
         if (!response.ok) {
             alert('Error fetching results')
@@ -52,32 +53,35 @@ const mapStateToProps = (state) => ({
 
         const { data } = await response.json()
 
-        this.setState({ jobs: data })
+        setJobs(data)
 
     }
 
-    render() {
+    
         return (
+            <>
             <Container>
                 <Row>
                     <Col xs={10} className='mx-auto my-3'>
                         <h1> Jobs Search Engine</h1>
                     </Col>
                     <Col xs={10} className='mx-auto'>
-                        <Form onSubmit={this.handleSubmit}>
-                            <Form.Control type="search" value={this.state.query} onChange={this.handleChange} placeholder="type and press Enter" />
+                        <Form onSubmit={handleSubmit}>
+                            <Form.Control type="search" value={query} onChange={(e)=>handleChange(e)} placeholder="type and press Enter" />
                         </Form>
                         
                     </Col>
-                    <Button onClick={()=>this.props.history.push('/favorite')}>FAVORITES</Button>
+                    <Button onClick={()=>history.push('/favorite')}>FAVORITES</Button>
                     <Col xs={10} className='mx-auto mb-5'>
                         {
-                            this.state.jobs.map(jobData => <Job key={uniqid()} data={jobData} />)
+                            jobs.map(jobData => <Job key={uniqid()} data={jobData} />)
                         }
                     </Col>
                 </Row>
             </Container>
+            </>
         )
-    }
+                
+    
 }
-export default connect(mapStateToProps,mapDispatchToProps)(MainSearch)
+export default MainSearch

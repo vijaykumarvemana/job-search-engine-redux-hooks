@@ -1,22 +1,26 @@
 import { Button, Col, Container, Row} from "react-bootstrap"
-import { connect } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
+import { removeFavoriteAction } from "../actions"
 
 
 
-const mapStateToProps = (state) =>({
-    companies: state.favorite.companies
-})
-const mapDispatchToProps = (dispatch) => ({
-    removieFromFavorite: (index) =>{
-        dispatch({
-            type: 'REMOVE_COMPANY_FROM_FAVORITE',
-            payload: index
-        })
-    }
-})
+// const mapStateToProps = (state) =>({
+//     companies: state.favorite.companies
+// })
+// const mapDispatchToProps = (dispatch) => ({
+//     removieFromFavorite: (index) =>{
+//         dispatch({
+//             type: 'REMOVE_COMPANY_FROM_FAVORITE',
+//             payload: index
+//         })
+//     }
+// })
 
 
-const Favorite = ({companies, removieFromFavorite}) => {
+const Favorite = () => {
+
+    const companies = useSelector(state => state.favorite.companies)
+    const dispatch = useDispatch()
     return(
      <Container>
          <Row>
@@ -25,7 +29,7 @@ const Favorite = ({companies, removieFromFavorite}) => {
                  companies.map((company,i) =>
                  
                <div  key={i} style={{ border: "2px solid #00000033", borderRadius: 4 , marginBottom:"10px", marginTop:"30px"}}>{company.company_name}
-               <Button onClick={() =>removieFromFavorite(i)}>remove</Button>
+               <Button onClick={() =>dispatch(removeFavoriteAction(i))}>remove</Button>
                </div>
                 
              
@@ -42,4 +46,4 @@ const Favorite = ({companies, removieFromFavorite}) => {
 
     )
 }
-export default connect(mapStateToProps, mapDispatchToProps)(Favorite)
+export default Favorite

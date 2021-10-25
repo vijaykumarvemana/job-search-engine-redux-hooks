@@ -27,6 +27,7 @@ export const removeFavoriteAction = (index) => ({
         let resp = await fetch('https://strive-jobs-api.herokuapp.com/jobs?limit=10&skip=10')
         if (resp.ok) {
           let jobs = await resp.json()
+          console.log(jobs)
           
           dispatch({
             type: GET_JOBS,
